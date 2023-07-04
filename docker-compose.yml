@@ -21,12 +21,14 @@ services:
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
       KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+      FILEBEAT_SYSTEM_PASSWORD: ${FILEBEAT_SYSTEM_PASSWORD:-}
     networks:
       - elk
     depends_on:
       - elasticsearch
 
   elasticsearch:
+    container_name: elasticsearch
     build:
       context: elasticsearch/
       args:
@@ -50,9 +52,10 @@ services:
       - elk
 
   logstash:
+    container_name: logstash
     build:
       context: logstash/
-      args:
+      args: 
         ELASTIC_VERSION: ${ELASTIC_VERSION}
     volumes:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro,Z
@@ -60,10 +63,10 @@ services:
     ports:
       - "5044:5044"
       - "50000:50000/tcp"
-      - "50000:50000/udp"
+      - "12201:12201/udp"
       - "9600:9600"
     environment:
-      LS_JAVA_OPTS: -Xms256m -Xmx256m
+      LS_JAVA_OPTS: -Xms1g -Xmx1g
       LOGSTASH_INTERNAL_PASSWORD: ${LOGSTASH_INTERNAL_PASSWORD:-}
     networks:
       - elk
@@ -71,6 +74,7 @@ services:
       - elasticsearch
 
   kibana:
+    container_name: kibana
     build:
       context: kibana/
       args:
@@ -87,6 +91,53 @@ services:
       - elk
     depends_on:
       - elasticsearch
+    
+  filebeat:
+    user: root
+    container_name: filebeat    
+    build:
+      context: filebeat/
+      args:
+        ELASTIC_VERSION: ${ELASTIC_VERSION}
+    # links:
+    #   - logstash:logstash
+    depends_on:
+      - elasticsearch
+    volumes:
+      - /var/run/docker.sock:/host_docker/docker.sock
+      - /var/lib/docker:/host_docker/var/lib/docker
+      - ./loglaunch:/usr/share/filebeat/loglaunch
+      - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml 
+      - .filebeat/config/panw.yml:/usr/share/filebeat/modules.d/panw.yml   
+    command: ["--strict.perms=false"]
+    networks:
+      - elk
+    ulimits: 
+      memlock:
+        soft: -1
+        hard: -1
+    stdin_open: true
+    tty: true
+    deploy:
+      mode: global
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "50"
+  # syslog-ng:
+  #   build:
+  #     context: syslog-ng/
+  #   ports:
+  #     - "514:514/udp"
+  #     - "601:601"
+  #     - "6514:6514"
+  #   volumes:
+  #     - "./syslog-ng/logs:/var/log/syslog-ng"
+  #     - "./syslog-ng/socket:/var/run/syslog-ng"
+  #     - "./syslog-ng/config/:/etc/syslog-ng"
+  #   networks:
+  #     - elk
 
 networks:
   elk:

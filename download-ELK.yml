@@ -1,0 +1,38 @@
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.5.1-x86_64.rpm
+
+wget https://artifacts.elastic.co/downloads/logstash/logstash-8.5.1-x86_64.rpm
+
+wget https://artifacts.elastic.co/downloads/kibana/kibana-8.5.1-x86_64.rpm
+
+yumdownloader --resolve ./kibana-7.17.0-x86_64.rpm 
+  133  yum install --downloadonly --downloaddir=. ./kibana-7.17.0-x86_64.rpm
+
+
+
+sudo rpm --install elasticsearch-8.5.1-x86_64.rpm
+
+
+sudo systemctl enable elasticsearch.service
+sudo systemctl start elasticsearch.service
+
+sudo systemctl enable logstash.service
+sudo systemctl start logstash.service
+
+sudo systemctl enable kibana.service
+sudo systemctl start kibana.service
+
+# Find the status of the elasticsearch service
+systemctl status elasticsearch.service
+
+
+cd usr/share/elasticsearch
+bin/elasticsearch-create-enrollment-token --scope kibana
+
+usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token --scope kibana
+
+https://localhost:5601
+
+bin/elasticsearch-setup-passwords interactive|auto
+
+elastic
+PtHuupMUG5UHofbge8PM

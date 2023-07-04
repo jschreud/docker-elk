@@ -7,6 +7,10 @@ server.host: 0.0.0.0
 elasticsearch.hosts: [ 'http://elasticsearch:9200' ]
 monitoring.ui.container.elasticsearch.enabled: true
 
+uiSettings:
+  overrides:
+    "theme:darkMode": true
+    
 ## X-Pack security credentials
 #
 elasticsearch.username: kibana_system
@@ -26,20 +30,21 @@ xpack.fleet.packages:
   - name: elastic_agent
     version: latest
 
-xpack.fleet.agentPolicies:
-  - name: Fleet Server policy
-    id: fleet-server-policy
-    description: Fleet Server policy
-    monitoring_enabled:
-      - logs
-      - metrics
-    package_policies:
-      - name: fleet_server-1
-        package:
-          name: fleet_server
-      - name: system-1
-        package:
-          name: system
-      - name: elastic_agent-1
-        package:
-          name: elastic_agent
+# xpack.security.enabled: false
+# xpack.fleet.agentPolicies:
+#   - name: Fleet Server policy
+#     id: fleet-server-policy
+#     description: Fleet Server policy
+#     monitoring_enabled:
+#       - logs
+#       - metrics
+#     package_policies:
+#       - name: fleet_server-1
+#         package:
+#           name: fleet_server
+#       - name: system-1
+#         package:
+#           name: system
+#       - name: elastic_agent-1
+#         package:
+#           name: elastic_agent

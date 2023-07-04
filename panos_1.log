@@ -1,0 +1,1 @@
+2001/01/01 01:01:01,0004A100455,THREAT,vulnerability,148,2001/01/01 01:01:01, 192.168.0.1,192.168.0.2,0.0.0.0,0.0.0.0,p-Main-Outbound-2,,,web-browsing,vsys1,firewall,irouter,ethernet1/3,ethernet1/1,p-WeaselUrlLogging-Local4-NCR,2001/01/01 01:01:01,65534,1,80,1433,0,0,0x0,tcp,alert,"",HTTP JavaScript Obfuscation Detected(31825),any,low,
